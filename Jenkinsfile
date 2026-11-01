@@ -1,42 +1,44 @@
 pipeline {
     agent any
 
-    stages {
+    triggers {
+        githubPush()
+    }
 
+    stages {
         stage('Checkout') {
             steps {
-                echo 'Checking out code from GitHub'
+                echo 'Fetching Java code from GitHub'
             }
         }
 
-        stage('Check Java') {
+        stage('Check Java and Maven') {
             steps {
                 bat 'java -version'
                 bat 'mvn -version'
             }
         }
 
-        stage('Compile Java') {
+        stage('Compile') {
             steps {
                 bat 'mvn clean compile'
             }
         }
 
-        stage('Run Application') {
+        stage('Run Java Application') {
             steps {
                 bat 'mvn exec:java -Dexec.mainClass=HelloJenkins'
             }
         }
-
     }
 
     post {
         success {
-            echo 'Java build completed successfully!'
+            echo 'SUCCESS: Java application executed!'
         }
 
         failure {
-            echo 'Java build failed. Check Console Output.'
+            echo 'FAILURE: Check the build console output.'
         }
     }
 }
